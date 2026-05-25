@@ -220,6 +220,11 @@ bash scripts/healthcheck_sglang.sh             # SGLang (port 30000)
 
 ---
 
+## Further Reading
+- [Engineering challenges and lessons learned](docs/engineering-challenges.md) — infrastructure problems encountered and solved during the experiment.
+
+---
+
 ## What's Next
 
 If continuing this work: higher concurrency sweeps (c8, c16) to find the saturation point, real traffic traces from public datasets, speculative decoding comparison, and a multi-GPU run with tensor parallelism across both engines.
