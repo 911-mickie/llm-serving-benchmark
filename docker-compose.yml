@@ -1,0 +1,30 @@
+services:
+  vllm-server:
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:v0.8.5}
+    container_name: ${CONTAINER_NAME}
+    restart: unless-stopped
+    runtime: nvidia
+    gpus: all
+    ipc: host
+    ports:
+      - "${HOST_PORT}:8000"
+    volumes:
+      - "${HF_CACHE}:/root/.cache/huggingface"
+    environment:
+      HF_TOKEN: ${HF_TOKEN}
+      HF_HUB_DISABLE_XET: "1"
+    command:
+      - --model
+      - ${MODEL_NAME}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --dtype
+      - ${DTYPE}
+      - --gpu-memory-utilization
+      - ${GPU_MEMORY_UTILIZATION}
+      - --max-model-len
+      - ${MAX_MODEL_LEN}
+      - --max-num-seqs
+      - ${MAX_NUM_SEQS}

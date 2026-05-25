@@ -1,0 +1,22 @@
+FROM lmsysorg/sglang:v0.4.9.post6-cu126
+
+# Remove incompatible versions if present
+RUN pip uninstall -y vllm transformers || true
+
+# Install vLLM normally so dependencies like cachetools are installed
+RUN pip install --no-cache-dir "vllm==0.9.0.1"
+
+# Force transformers back below the aimv2 conflict version
+RUN pip install --no-cache-dir --force-reinstall "transformers==4.53.3"
+
+# Sanity check during image build
+RUN python3 - <<'PY'
+import transformers
+print("transformers:", transformers.__version__)
+
+import cachetools
+print("cachetools ok")
+
+import vllm
+print("vllm:", vllm.__version__)
+PY

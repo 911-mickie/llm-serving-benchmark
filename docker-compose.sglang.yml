@@ -1,0 +1,51 @@
+services:
+  sglang-server:
+    image: ${SGLANG_IMAGE:-lmsysorg/sglang:v0.4.9.post6-cu126}
+    container_name: ${SGLANG_CONTAINER_NAME:-sglang-command-r7b}
+    restart: unless-stopped
+
+    # GPU access
+    runtime: nvidia
+    gpus: all
+
+    # SGLang docs recommend shared memory / IPC for docker serving.
+    ipc: host
+    shm_size: "32gb"
+
+    ports:
+      - "${SGLANG_HOST_PORT:-30000}:${SGLANG_CONTAINER_PORT:-30000}"
+
+    volumes:
+      - "${HF_CACHE}:/root/.cache/huggingface"
+
+    environment:
+      HF_TOKEN: ${HF_TOKEN}
+      HF_HUB_DISABLE_XET: "1"
+
+    ulimits:
+      memlock: -1
+      stack: 67108864
+
+    command:
+      - python3
+      - -m
+      - sglang.launch_server
+      - --model-path
+      - ${MODEL_NAME}
+      - --host
+      - 0.0.0.0
+      - --port
+      - "${SGLANG_CONTAINER_PORT:-30000}"
+      - --context-length
+      - "${SGLANG_CONTEXT_LENGTH:-2048}"
+      - --mem-fraction-static
+      - "${SGLANG_MEM_FRACTION_STATIC:-0.90}"
+      - --max-running-requests
+      - "${SGLANG_MAX_RUNNING_REQUESTS:-4}"
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${SGLANG_CONTAINER_PORT:-30000}/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s

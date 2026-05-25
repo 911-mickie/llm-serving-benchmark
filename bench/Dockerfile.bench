@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /workspace
+
+RUN pip install --no-cache-dir \
+    httpx \
+    tqdm \
+    numpy \
+    transformers \
+    huggingface_hub
+
+ENTRYPOINT ["python", "bench/benchmark_openai.py"]
