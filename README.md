@@ -1,4 +1,4 @@
-# llm-serving-lab
+# llm-serving-benchmark
 
 Benchmarking vLLM vs SGLang on Qwen2.5-7B-Instruct (FP16 and AWQ) on a single RTX 3090.
 
